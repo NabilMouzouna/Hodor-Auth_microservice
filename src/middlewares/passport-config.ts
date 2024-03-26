@@ -1,22 +1,27 @@
 import { Strategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 import passport from 'passport';
-import { Request } from 'express';
+import User from '../models/User';
+import { config } from 'dotenv';
+config()
 
-const options: StrategyOptions = {
+
+const secret = process.env.SECRET_KEY!
+const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'your_secret_key_here', // Replace with your actual secret key
+  secretOrKey: secret
 };
 
 passport.use(
-  new Strategy(options, (payload, done) => {
-    // Here you would typically query your database to find the user based on the payload information
-    // For example, if using Mongoose:
-    // User.findById(payload.sub, (err, user) => {
-    //   if (err) return done(err, false);
-    //   if (user) return done(null, user);
-    //   return done(null, false);
-    // });
-  })
+  new Strategy(options,async (payload, done) => {
+    const user =await User.find({email:payload.email});
+    if (user) {
+      console.log(user)
+      return done(null, user);
+    } else {
+      return done(null, false);
+    }
+  }),
 );
+
 
 export default passport;

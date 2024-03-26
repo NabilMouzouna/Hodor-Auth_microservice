@@ -1,26 +1,30 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
+dotenv.config();
+import mongoose from 'mongoose';
+import loginRoute from './routes/login';
+import signupRoute from "./routes/signup"
+import verifyToken from "./routes/verify-token"
+
+// Variables
 const app: Express = express();
 const port = process.env.PORT || 8001;
-dotenv.config();
+
+// Middlewares
+app.use(express.json());
+app.use("/signup", signupRoute)
+app.use('/login', loginRoute);
+app.use('/verify-token', verifyToken);
+
+try {
+  mongoose.connect(process.env.MONGODB_URI!);
+  console.log('database connection established');
+} catch (error) {
+  console.log(error);
+}
 
 app.get('/', (req: Request, res: Response) => {
-  res.send(
-    `
-  <div style = "font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
-        <h1 align="center"><strong>Welcome to Express &amp; TypeScript Server</strong></h1>
-        <p>&nbsp;</p>
-        <p align="center"><strong>Express</strong> and <strong>Typescript</strong> Project Starter For your Projects. It uses <strong>Eslint</strong> and <strong>Prettier</strong> all set 🫡! so you can focus only on the real work.</p>
-        <p>here are some useful commands :</p>
-        <ul style="line-height:1.67">
-            <li><strong>dev</strong>: This command is used to start the development server. and runs the <strong>build</strong> command alongside</li>
-            <li><strong>lint</strong> : highlighting any potential issues or violations of coding standards defined in the ESLint configuration.</li>
-            <li><strong>lint:fix</strong> : This command is similar to lint, but it also attempts to automatically fix any fixable issues found by ESLint, improving code consistency and adherence to coding standards.</li>
-            <li><strong>format</strong>: The format command uses Prettier to automatically format TypeScript, JSON, and YAML files within the src/ directory, ensuring consistent code style across the project.</li>
-        </ul>
-      </div>
-  `,
-  );
+  res.send('Welcome to Nuble Authentication!');
 });
 
 app.listen(port, () => {
