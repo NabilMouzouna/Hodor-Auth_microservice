@@ -15,7 +15,6 @@ passport.use(
   new Strategy(options,async (payload, done) => {
     const user =await User.find({email:payload.email});
     if (user) {
-      console.log(user)
       return done(null, user);
     } else {
       return done(null, false);
