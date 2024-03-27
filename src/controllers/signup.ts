@@ -15,10 +15,8 @@ const SignUp = async (req: Request, res: Response) => {
       const token = JWT.sign({id:newUser.id, email :newUser.email,username: newUser.username, profilePicture : newUser.profilePicture},process.env.SECRET_KEY!);
       res.status(200).json({
         message: `this user ${newUser.email} is registered`,
-        username,
-        email,
-        profilePicture,
-        token,
+        user : {userId : newUser.id,username, email, profilePicture},
+        token
       });
     }
   }

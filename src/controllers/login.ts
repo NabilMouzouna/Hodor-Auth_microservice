@@ -17,9 +17,7 @@ const Login = async (req: Request, res: Response) => {
         const token = JWT.sign({id:user.id, email :user.email,username: user.username, profilePicture : user.profilePicture},process.env.SECRET_KEY!)
           res.status(200).json({
             message : "logged in successfully",
-            id: user.id,
-            email: user.email,
-            profilePicture: user.profilePicture,
+            user : {userId : user.id,username : user.username, email: user.email, profilePicture: user.profilePicture},
             token
           })
       }

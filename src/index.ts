@@ -6,8 +6,8 @@ dotenv.config();
 import mongoose from 'mongoose';
 import loginRoute from './routes/login';
 import signupRoute from "./routes/signup"
-import verifyToken from "./routes/verify-token"
-
+import verifyTokenRoute from "./routes/verify-token"
+import userRoute from "./routes/users"
 // Variables
 const app: Express = express();
 const port = process.env.PORT || 8001;
@@ -16,8 +16,8 @@ const port = process.env.PORT || 8001;
 app.use(express.json());
 app.use("/signup", signupRoute)
 app.use('/login', loginRoute);
-app.use('/verify-token', verifyToken);
-
+app.use('/verify-token', verifyTokenRoute);
+app.use("/users", userRoute)
 try {
   mongoose.connect(process.env.MONGODB_URI!);
   console.log('database connection established');
