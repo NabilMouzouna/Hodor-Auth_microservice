@@ -15,7 +15,7 @@ app.use(cookieParser())
 app.use(cors({credentials : true}))
 app.use("/signup", signupRoute)
 app.use('/login', loginRoute);
-app.use('/verify-token', verifyTokenRoute);
+app.use('/check-auth', verifyTokenRoute);
 app.use('/refresh-token',refreshToken );
 app.use("/users", userRoute)
 app.use("/logout", logOutRoute)

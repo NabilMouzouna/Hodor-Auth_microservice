@@ -1,14 +1,18 @@
 import { Request, Response } from "express"
 import User from "../models/User"
 import { genSaltSync, hashSync } from "bcryptjs"
+import { SuccessResponseType } from "../types/response"
+import { userType } from "../types/user"
 export const GetAllUsers = async(req : Request,res : Response) => { 
     try {
-        const users = await User.find()
-        res.status(200).json({
-            message : "these are all available users",
-            users
+        const users : userType[] = await User.find()
+        // @ts-ignore 
+        const usersInfo = users.map(user => ({userId: user.id, username: user.username, email: user.email, profilePicture: user.profilePicture}))
+        return res.status(200).json({
+            message : "Registered users",
+            usersInfo
         })
-    } catch (error) {res.status(400).json(error)}
+    } catch (error) {return res.status(400).json(error)}
  }
 
 
@@ -18,11 +22,12 @@ export const GetAllUsers = async(req : Request,res : Response) => {
 export const GetUserById = async (req : Request,res : Response) => { 
     try {
         const user = await User.findById(req.params.userId)
-        res.status(200).json({
-            message : "user Was found in the database",
-            user : {id : user?.id,username : user?.username, email : user?.email, password : user?.password}
-        })
-    } catch (error) {res.status(400).json(error)}
+        const response : SuccessResponseType = {
+            message : "user was found in the database",
+            user : {userId : user?.id,username : user!.username, email : user!.email, profilePicture : user!.profilePicture || ""}
+        }
+        return res.status(200).json(response)
+    } catch (error) {return res.status(400).json(error)}
  }
 
 
@@ -36,11 +41,12 @@ export const UpdateUserById =async (req : Request,res : Response) => {
         const salt = genSaltSync(10)
         const hashedPassword = hashSync(password, salt)
         const user = await User.findByIdAndUpdate(req.params.userId,{username, email, password : hashedPassword, profilePicture})
-        res.status(200).json({
+        const response : SuccessResponseType = {
             message : "user information are updated successfully",
-            user : {id :user?.id ,username : user?.username, email : user?.email, password : user?.password}
-        })
-    } catch (error) {res.status(400).json(error)}
+            user : {userId :user!.id ,username : user!.username, email : user!.email, profilePicture : user!.profilePicture || ""}
+        }
+        return res.status(200).json(response)
+    } catch (error) {return res.status(400).json(error)}
  }
 
 
@@ -49,8 +55,8 @@ export const UpdateUserById =async (req : Request,res : Response) => {
 export const DeleteUserById =async (req : Request,res : Response) => { 
     try {
         const user = await User.findByIdAndDelete(req.params.userId)
-        res.status(200).json({
+        return res.status(200).json({
             message : `the user ${user?.username} was deleted successfully`,
         })
-    } catch (error) {res.status(400).json(error)}
+    } catch (error) {return res.status(400).json(error)}
  }

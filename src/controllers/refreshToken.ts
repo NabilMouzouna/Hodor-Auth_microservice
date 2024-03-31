@@ -24,14 +24,12 @@ const RefreshToken = async (req: Request, res: Response) => {
                 process.env.SECRET_KEY!,
                 { expiresIn: "5min" }
             );
-            
-            return res.status(200).json({
-                accessToken
-            });
+            res.setHeader("authorization", "Bearer " + accessToken)
+            return res.status(200).json({accessToken});
         });
     } catch (error) {
         console.error("Error handling refresh token:", error);
-        res.sendStatus(500);
+        return res.sendStatus(500);
     }
 };
 

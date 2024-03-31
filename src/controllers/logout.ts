@@ -11,6 +11,7 @@ const Logout = async(req : Request, res : Response) => {
 
     try {
         await foundUser.updateOne({ token : ""})
+        res.setHeader("authorization", "")
         return res.clearCookie("jwt",{httpOnly: true, maxAge:7 * 24 * 60 * 60 * 1000}).status(200).json({message : "logged out successfully"})
     } catch (error) {
         return res.status(404).json({message : "there was an error, please try again"})
