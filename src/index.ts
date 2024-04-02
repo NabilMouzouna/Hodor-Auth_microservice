@@ -1,6 +1,6 @@
 //!TODO : implement REFRESH Token
 import express, { Express, Request, Response } from 'express';
-import { loginRoute,signupRoute,verifyTokenRoute,userRoute,logOutRoute, refreshToken, cors, config, cookieParser} from "./libs/manage-Import"
+import { loginRoute,signupRoute,auth,userRoute,logOutRoute, cors, config, cookieParser} from "./libs/manage-Import"
 import connectDB from './libs/connectDB';
 
 // Variables
@@ -15,8 +15,7 @@ app.use(cookieParser())
 app.use(cors({credentials : true}))
 app.use("/signup", signupRoute)
 app.use('/login', loginRoute);
-app.use('/check-auth', verifyTokenRoute);
-app.use('/refresh-token',refreshToken );
+app.use('/auth', auth);
 app.use("/users", userRoute)
 app.use("/logout", logOutRoute)
 
