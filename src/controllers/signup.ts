@@ -1,31 +1,39 @@
 import User from '../models/User';
-import JWT from 'jsonwebtoken';
+import axios from "axios"
 import { genSaltSync, hashSync } from 'bcryptjs';
-import { Request, Response } from 'express';
-import { SuccessResponseType } from '../types/response';
+import { Request, Response, response } from 'express';
+import { sign } from 'jsonwebtoken';
+
+
 
 const SignUp = async (req: Request, res: Response) => {
     const { username, email, password, profilePicture } = req.body;
     
     const user = await User.findOne({ email });
     if (user) res.status(409).json({ message: `this user ${user.email} already exists` });
+
     else {
       const salt = genSaltSync(10)
       const hash = hashSync(password,salt)
-      const newUser = await User.create({ username, email, password : hash, profilePicture });
-      const token = JWT.sign({userId:newUser.id, email :newUser.email,username: newUser.username, profilePicture : newUser.profilePicture},process.env.SECRET_KEY!,{expiresIn: "5min"});
-      const refreshToken = JWT.sign({userId: newUser.id, email : newUser.email},process.env.REFRESH_SECRET_KEY!,{expiresIn: "7d"})
+
+      const token = sign({username, email, profilePicture},process.env.SECRET_KEY!,{expiresIn: "5min"});
+      const refreshToken = sign({username, email, profilePicture},process.env.REFRESH_SECRET_KEY!,{expiresIn: "7d"})
+
+      const userToBeSaved = { username, email, password : hash, profilePicture, token : refreshToken }
+      
         try {
-          await User.findByIdAndUpdate(newUser.id,{token : refreshToken})
-          const response : SuccessResponseType = {
-            message: `this user ${newUser.email} is registered`,
-            user : {userId : newUser.id,username, email, profilePicture},
-          }
+
+          const response = await axios.post(`${process.env.USER_MANAGER_URL!}/users`,userToBeSaved)
+
+          if(!response.data.user) res.status(500).json("no data was returned")
+          
           res.cookie("jwt",refreshToken, {httpOnly: true, maxAge:7 * 24 * 60 * 60 * 1000})
           res.setHeader("authorization", "Bearer " + token)
-          return res.status(200).json(response);
+          res.json(response.data)
+
         } catch (error) {
-          return res.status(500).json(error)
+          console.log(error)
+          res.json(error)
         }
     }
   }

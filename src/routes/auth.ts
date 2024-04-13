@@ -1,5 +1,5 @@
 import { Router } from "express";
-import passport from "../middlewares/passport-config";
+import passport from "../middlewares/passport-jwt";
 import VerifyToken from "../controllers/check-auth";
 import RefreshToken from "../controllers/refreshToken";
 const router = Router();

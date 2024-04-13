@@ -1,13 +1,13 @@
 //!TODO : implement REFRESH Token
 import express, { Express, Request, Response } from 'express';
-import { loginRoute,signupRoute,auth,userRoute,logOutRoute, cors, config, cookieParser} from "./libs/manage-Import"
+import { loginRoute,signupRoute,auth,logOutRoute, cors, config, cookieParser} from "./libs/manage-Import"
 import connectDB from './libs/connectDB';
+config()
 
 // Variables
 const app: Express = express();
-config()
-connectDB()
-const PORT = process.env.PORT || 8001;
+
+const PORT = process.env.PORT || 7001;
 
 // Middlewares
 app.use(express.json());
@@ -16,7 +16,6 @@ app.use(cors({credentials : true}))
 app.use("/signup", signupRoute)
 app.use('/login', loginRoute);
 app.use('/auth', auth);
-app.use("/users", userRoute)
 app.use("/logout", logOutRoute)
 
 
@@ -25,6 +24,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.listen(PORT, () => {
-  const message = `\n\t->\x1b[33m Server is Running at\x1b[0m \x1b[34mhttp://localhost:${PORT}\x1b[0m\n`;
-  console.log(message);
+  const message = [`\n\t✅\u001b[1m Server is Running at\u001b[0m`,`\x1b[34mhttp://localhost:${PORT}\x1b[0m\n`];
+  connectDB()
+  console.log(...message);
 });
