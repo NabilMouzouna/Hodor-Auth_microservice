@@ -8,8 +8,7 @@ import { getUserWithQueryParams } from '../libs/InteractionWithUserServer';
 const Login = async (req: Request, res: Response) => {
 
     const { email, password } = req.body;
-  
-    // const user = await User.findOne({ email });
+
     const data = await getUserWithQueryParams(email);
     if (!data?.user) res.status(409).json({ message: `this email : ${email} not found Please register first` });
     else {

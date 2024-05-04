@@ -6,9 +6,9 @@ import { SuccessResponseType } from '../types/response';
  * @param {object} userInformation - The information of the user to be set.
  * @returns {Promise<SuccessResponseType | undefined>} undefined if the user already exists, otherwise returns the user information
  */
-export async function setUser(userInformation: any): Promise<SuccessResponseType | undefined> {
+export async function setUser(userInformation: any, projectId : string): Promise<SuccessResponseType | undefined> {
     try {
-        const response = await axios.post(`${process.env.USERS_SERVER!}/users`, userInformation);
+        const response = await axios.post(`${process.env.USERS_SERVER!}/users`, {...userInformation, projectId});
         if (response.status !== 200) return undefined;
         return response.data;
     } catch (error) {
